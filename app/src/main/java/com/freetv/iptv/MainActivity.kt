@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     private fun load(playlist: Playlist) {
         categoryAdapter.select(playlist)
         val id = ++requestId
-        cache[playlist.url]?.let { show(it); return }
+        cache[playlist.title]?.let { show(it); return }
 
         progress.visibility = View.VISIBLE
         status.visibility = View.VISIBLE
@@ -72,12 +72,12 @@ class MainActivity : AppCompatActivity() {
         channelAdapter.submit(emptyList())
 
         executor.execute {
-            val result = runCatching { M3uParser.fetch(playlist.url) }
+            val result = runCatching { fetchPlaylist(playlist) }
             main.post {
                 if (id != requestId || isFinishing) return@post
                 progress.visibility = View.GONE
                 result.onSuccess {
-                    cache[playlist.url] = it
+                    cache[playlist.title] = it
                     show(it)
                 }.onFailure {
                     status.visibility = View.VISIBLE
@@ -85,6 +85,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /** Downloads every source of a category, merges them, drops duplicates and applies the name filter. */
+    private fun fetchPlaylist(playlist: Playlist): List<Channel> {
+        val merged = LinkedHashMap<String, Channel>()
+        var lastError: Throwable? = null
+        for (url in playlist.urls) {
+            runCatching { M3uParser.fetch(url) }
+                .onSuccess { list -> list.forEach { merged.putIfAbsent(it.url, it) } }
+                .onFailure { lastError = it }
+        }
+        if (merged.isEmpty()) lastError?.let { throw it }
+        val filter = playlist.nameFilter ?: return merged.values.toList()
+        return merged.values.filter { it.name.contains(filter, ignoreCase = true) }
     }
 
     private fun show(channels: List<Channel>) {

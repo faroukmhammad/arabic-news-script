@@ -4,7 +4,7 @@ A simple Android TV (and phone) app that plays **free, public IPTV channels** fr
 open-source [iptv-org](https://github.com/iptv-org/iptv) playlists. No account or API key needed.
 
 ## Features
-- Categories: Arabic, News, Sports, Kids, Movies, Music, Documentary, Religious, English,
+- Categories: Arabic, News, beIN Sports (free-to-air beIN channels found in the free lists), Sports, Kids, Movies, Music, Documentary, Religious, English,
   Saudi Arabia, Egypt, UAE, Jordan
 - Channel grid with logos, search box
 - Full-screen player (Media3 / ExoPlayer, HLS supported)

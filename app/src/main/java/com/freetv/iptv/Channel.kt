@@ -9,8 +9,18 @@ data class Channel(
     val referrer: String?,
 )
 
-/** A free public playlist from the iptv-org project (https://github.com/iptv-org/iptv). */
-data class Playlist(val title: String, val url: String)
+/**
+ * A category built from free public playlists of the iptv-org project
+ * (https://github.com/iptv-org/iptv). If [nameFilter] is set, only channels whose
+ * name contains it are shown.
+ */
+data class Playlist(
+    val title: String,
+    val urls: List<String>,
+    val nameFilter: String? = null,
+) {
+    constructor(title: String, url: String) : this(title, listOf(url))
+}
 
 object Playlists {
     private const val BASE = "https://iptv-org.github.io/iptv"
@@ -18,6 +28,13 @@ object Playlists {
     val all = listOf(
         Playlist("Arabic", "$BASE/languages/ara.m3u"),
         Playlist("News", "$BASE/categories/news.m3u"),
+        // beIN-branded channels that appear in the free public lists (free-to-air ones only;
+        // beIN's paid channels are not in these lists).
+        Playlist(
+            "beIN Sports",
+            listOf("$BASE/categories/sports.m3u", "$BASE/languages/ara.m3u", "$BASE/countries/qa.m3u"),
+            nameFilter = "bein",
+        ),
         Playlist("Sports", "$BASE/categories/sports.m3u"),
         Playlist("Kids", "$BASE/categories/kids.m3u"),
         Playlist("Movies", "$BASE/categories/movies.m3u"),
