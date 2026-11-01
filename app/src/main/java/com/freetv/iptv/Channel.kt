@@ -27,6 +27,9 @@ object Playlists {
 
     val all = listOf(
         Playlist("Arabic", "$BASE/languages/ara.m3u"),
+        // Every channel in the iptv-org database, grouped by country (≈10,000 channels).
+        // Search by channel or country name, e.g. "France".
+        Playlist("All World", "$BASE/index.country.m3u"),
         Playlist("News", "$BASE/categories/news.m3u"),
         // beIN-branded channels that appear in the free public lists (free-to-air ones only;
         // beIN's paid channels are not in these lists).
