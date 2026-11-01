@@ -7,6 +7,7 @@ open-source [iptv-org](https://github.com/iptv-org/iptv) playlists. No account o
 - Categories: Arabic, News, beIN Sports (free-to-air beIN channels found in the free lists), Sports, Kids, Movies, Music, Documentary, Religious, English,
   Saudi Arabia, Egypt, UAE, Jordan
 - Channel grid with logos, search box
+- **+ Add playlist URL**: load your own M3U link (e.g. from a TV service you subscribe to); it is saved as *My Playlist*
 - Full-screen player (Media3 / ExoPlayer, HLS supported)
 - TV remote friendly: D-pad navigation, **Up / Down or CH+ / CH−** switches channel while watching
 - Shows in the Android TV launcher (banner) and in the normal phone launcher

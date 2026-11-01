@@ -1,6 +1,8 @@
 package com.freetv.iptv
 
+import android.content.Context
 import android.content.Intent
+import android.text.InputType
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +12,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +31,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var channelAdapter: ChannelAdapter
     private lateinit var categoryAdapter: CategoryAdapter
 
+    private val prefs by lazy { getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    private val myPlaylistTitle by lazy { getString(R.string.my_playlist) }
+    /** Special entry: no URLs, opens the "add playlist URL" dialog. */
+    private val addEntry by lazy { Playlist(getString(R.string.add_playlist), emptyList()) }
+
     private var loaded: List<Channel> = emptyList()
     private var requestId = 0
 
@@ -39,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         status = findViewById(R.id.status)
         search = findViewById(R.id.search)
 
-        categoryAdapter = CategoryAdapter(Playlists.all) { load(it) }
+        categoryAdapter = CategoryAdapter(categories()) { onCategory(it) }
         findViewById<RecyclerView>(R.id.categories).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = categoryAdapter
@@ -59,6 +67,59 @@ class MainActivity : AppCompatActivity() {
         })
 
         load(Playlists.all.first())
+    }
+
+    private fun customUrl(): String? = prefs.getString(KEY_CUSTOM_URL, null)?.takeIf { it.isNotBlank() }
+
+    private fun categories(): List<Playlist> = buildList {
+        addAll(Playlists.all)
+        customUrl()?.let { add(Playlist(myPlaylistTitle, it)) }
+        add(addEntry)
+    }
+
+    private fun onCategory(p: Playlist) {
+        if (p.urls.isEmpty()) showPlaylistDialog() else load(p)
+    }
+
+    /** Lets the user enter their own M3U playlist URL (e.g. from a TV service they subscribe to). */
+    private fun showPlaylistDialog() {
+        val input = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+            hint = "https://example.com/playlist.m3u"
+            setText(customUrl() ?: "")
+            setSingleLine()
+        }
+        val pad = (20 * resources.displayMetrics.density).toInt()
+        val container = android.widget.FrameLayout(this).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+        val builder = AlertDialog.Builder(this)
+            .setTitle(R.string.add_playlist_title)
+            .setMessage(R.string.add_playlist_message)
+            .setView(container)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val url = input.text.toString().trim()
+                if (url.startsWith("http://", true) || url.startsWith("https://", true)) {
+                    prefs.edit().putString(KEY_CUSTOM_URL, url).apply()
+                    cache.remove(myPlaylistTitle)
+                    categoryAdapter.setItems(categories())
+                    load(Playlist(myPlaylistTitle, url))
+                } else {
+                    android.widget.Toast.makeText(this, R.string.invalid_url, android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+        if (customUrl() != null) {
+            builder.setNeutralButton(R.string.remove) { _, _ ->
+                prefs.edit().remove(KEY_CUSTOM_URL).apply()
+                cache.remove(myPlaylistTitle)
+                categoryAdapter.setItems(categories())
+                load(Playlists.all.first())
+            }
+        }
+        builder.show()
+        input.requestFocus()
     }
 
     private fun load(playlist: Playlist) {
@@ -124,6 +185,10 @@ class MainActivity : AppCompatActivity() {
     private fun play(list: List<Channel>, index: Int) {
         ChannelStore.channels = list
         startActivity(Intent(this, PlayerActivity::class.java).putExtra(PlayerActivity.EXTRA_INDEX, index))
+    }
+
+    companion object {
+        private const val KEY_CUSTOM_URL = "custom_playlist_url"
     }
 
     override fun onDestroy() {

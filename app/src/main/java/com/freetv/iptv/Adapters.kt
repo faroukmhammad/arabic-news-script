@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class CategoryAdapter(
-    private val items: List<Playlist>,
+    private var items: List<Playlist>,
     private val onClick: (Playlist) -> Unit,
 ) : RecyclerView.Adapter<CategoryAdapter.VH>() {
 
@@ -17,6 +17,11 @@ class CategoryAdapter(
 
     class VH(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.title)
+    }
+
+    fun setItems(list: List<Playlist>) {
+        items = list
+        notifyDataSetChanged()
     }
 
     fun select(p: Playlist) {

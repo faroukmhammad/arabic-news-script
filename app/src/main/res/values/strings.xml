@@ -7,4 +7,11 @@
     <string name="play_error">%1$s is unavailable right now. Press up/down for another channel.</string>
     <string name="channel_overlay">%1$d / %2$d   %3$s</string>
     <string name="footer">Free channels from iptv-org.github.io</string>
+    <string name="my_playlist">My Playlist</string>
+    <string name="add_playlist">+ Add playlist URL</string>
+    <string name="add_playlist_title">Add your playlist</string>
+    <string name="add_playlist_message">Enter an M3U playlist link, for example one provided by a TV service you subscribe to.</string>
+    <string name="save">Save</string>
+    <string name="remove">Remove</string>
+    <string name="invalid_url">Please enter a link starting with http:// or https://</string>
 </resources>
