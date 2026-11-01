@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Free IPTV</string>
+    <string name="search_hint">Search channels…</string>
+    <string name="loading">Loading %1$s channels…</string>
+    <string name="load_error">Could not load playlist: %1$s</string>
+    <string name="no_channels">No channels found</string>
+    <string name="play_error">%1$s is unavailable right now. Press up/down for another channel.</string>
+    <string name="channel_overlay">%1$d / %2$d   %3$s</string>
+    <string name="footer">Free channels from iptv-org.github.io</string>
+</resources>
