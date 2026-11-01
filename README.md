@@ -8,7 +8,8 @@ open-source [iptv-org](https://github.com/iptv-org/iptv) playlists. No account o
   Saudi Arabia, Egypt, UAE, Jordan
 - Channel grid with logos, search box
 - **+ Add playlist URL**: load your own M3U link (e.g. from a TV service you subscribe to); it is saved as *My Playlist*
-- Full-screen player (Media3 / ExoPlayer, HLS supported)
+- Full-screen player (Media3 / ExoPlayer, HLS supported), always picks the highest quality the device supports
+- On-screen ⏮ / ⏭ buttons switch to the previous / next channel
 - TV remote friendly: D-pad navigation, **Up / Down or CH+ / CH−** switches channel while watching
 - Shows in the Android TV launcher (banner) and in the normal phone launcher
 

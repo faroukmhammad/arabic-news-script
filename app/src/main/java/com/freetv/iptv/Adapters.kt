@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
@@ -31,8 +32,18 @@ class CategoryAdapter(
         notifyItemChanged(items.indexOf(p))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        VH(LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
+        val lm = (parent as? RecyclerView)?.layoutManager as? LinearLayoutManager
+        if (lm?.orientation == RecyclerView.HORIZONTAL) {
+            (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                width = ViewGroup.LayoutParams.WRAP_CONTENT
+                bottomMargin = 0
+                marginEnd = (8 * view.resources.displayMetrics.density).toInt()
+            }
+        }
+        return VH(view)
+    }
 
     override fun getItemCount() = items.size
 

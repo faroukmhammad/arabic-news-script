@@ -2,6 +2,7 @@ package com.freetv.iptv
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.text.InputType
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +15,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,19 +46,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Android 15 draws behind the status/navigation bars: pad the content so nothing overlaps.
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root)) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+        val portrait = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
         progress = findViewById(R.id.progress)
         status = findViewById(R.id.status)
         search = findViewById(R.id.search)
 
         categoryAdapter = CategoryAdapter(categories()) { onCategory(it) }
         findViewById<RecyclerView>(R.id.categories).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            // Phones in portrait: categories as a scrollable row on top. TV/landscape: side menu.
+            layoutManager = LinearLayoutManager(
+                this@MainActivity,
+                if (portrait) RecyclerView.HORIZONTAL else RecyclerView.VERTICAL,
+                false,
+            )
             adapter = categoryAdapter
         }
 
         channelAdapter = ChannelAdapter { list, index -> play(list, index) }
         findViewById<RecyclerView>(R.id.channels).apply {
-            val span = maxOf(2, (resources.configuration.screenWidthDp - 200) / 170)
+            val sideMenu = if (portrait) 0 else 190
+            val span = maxOf(2, (resources.configuration.screenWidthDp - sideMenu - 32) / 160)
             layoutManager = GridLayoutManager(this@MainActivity, span)
             adapter = channelAdapter
         }

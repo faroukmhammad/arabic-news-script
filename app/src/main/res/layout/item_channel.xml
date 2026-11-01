@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="160dp"
     android:layout_margin="6dp"
     android:background="@drawable/bg_card"
     android:clickable="true"
@@ -25,7 +25,8 @@
         android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLines="1"
+        android:lineSpacingExtra="0dp"
+        android:maxLines="2"
         android:textColor="@color/text"
         android:textSize="14sp" />
 
