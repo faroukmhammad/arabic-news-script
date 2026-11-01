@@ -49,6 +49,7 @@ class PlayerActivity : AppCompatActivity() {
             or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
         playerView = findViewById(R.id.player_view)
+        playerView.controllerAutoShow = false
         overlay = findViewById(R.id.overlay)
         index = savedInstanceState?.getInt(EXTRA_INDEX) ?: intent.getIntExtra(EXTRA_INDEX, 0)
 
